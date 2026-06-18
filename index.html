@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DripFinance — Spill & Drip Your Stash 💸</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js CDN for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'fadeIn': 'fadeIn 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar for aesthetic feel */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(244, 63, 94, 0.05);
+            border-radius: 99px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.3);
+            border-radius: 99px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(236, 72, 153, 0.5);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-tr from-[#faf5ff] via-[#fff5f5] to-[#fffbeb] text-slate-800 font-sans selection:bg-pink-100 selection:text-pink-900 pb-12 transition-all">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <nav class="border-b border-pink-100 bg-white/80 backdrop-blur-md sticky top-0 z-40 px-4 py-4 md:px-8 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            
+            <!-- Brand Logo & Slogan -->
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-pink-500 via-purple-500 to-amber-400 p-2.5 rounded-2xl shadow-lg shadow-pink-200">
+                    <i data-lucide="piggy-bank" class="h-6 w-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-wider bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 bg-clip-text text-transparent">
+                        DRIPFINANCE
+                    </h1>
+                    <p class="text-[10px] text-purple-500 font-bold tracking-widest uppercase">Spill the tea on cash, drip your stash</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs (Playful Pill Styling) -->
+            <div class="flex items-center bg-pink-50/80 p-1.5 rounded-2xl border border-pink-100" id="tab-navigation">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold transition-all duration-300 bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-md">
+                    📊 Home
+                </button>
+                <button onclick="switchTab('goals')" id="nav-goals" class="nav-btn px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold transition-all duration-300 text-slate-500 hover:text-pink-600">
+                    🐷 Celengan
+                </button>
+                <button onclick="switchTab('subs')" id="nav-subs" class="nav-btn px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold transition-all duration-300 text-slate-500 hover:text-pink-600">
+                    💸 Bocor Alus
+                </button>
+                <button onclick="switchTab('vibecheck')" id="nav-vibecheck" class="nav-btn px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold transition-all duration-300 relative text-slate-500 hover:text-pink-600">
+                    💬 Vibe Coach
+                    <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-pink-500"></span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- User Profile Container -->
+            <div class="hidden lg:flex items-center gap-3">
+                <div class="text-right">
+                    <p class="text-xs text-slate-400 font-semibold">Nama Bestie:</p>
+                    <input 
+                        type="text" 
+                        id="username-input"
+                        value="Lala" 
+                        oninput="updateUsername(this.value)"
+                        class="text-sm font-black text-pink-600 bg-transparent border-b-2 border-transparent hover:border-pink-300 focus:border-pink-500 focus:outline-none w-24 text-right transition-all"
+                        placeholder="Lala"
+                    />
+                </div>
+                <div id="avatar-container" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center font-black text-white shadow-md shadow-pink-100">
+                    LA
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- TOAST NOTIFICATION POP-UP -->
+    <div id="toast-notif" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white border-2 border-pink-300 px-5 py-4 rounded-2xl shadow-xl shadow-pink-100 hidden">
+        <div class="bg-pink-100 p-1.5 rounded-xl">
+            <i data-lucide="sparkles" class="h-4 w-4 text-pink-600"></i>
+        </div>
+        <p id="toast-text" class="text-xs md:text-sm font-black text-slate-800">Pesan Toast!</p>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 md:px-8">
+        
+        <!-- HERO INTERACTIVE PANEL -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-[#fdf2f8] via-[#fbf2ff] to-[#fffbeb] rounded-[2.5rem] border border-pink-100 p-6 md:p-8 mb-8 shadow-md">
+            <div class="absolute top-0 right-0 w-80 h-80 bg-pink-200/20 rounded-full blur-[90px] -z-10"></div>
+            <div class="absolute bottom-0 left-10 w-60 h-60 bg-yellow-100/30 rounded-full blur-[80px] -z-10"></div>
+
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <div id="financial-level-badge" class="inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-black mb-4 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-200">
+                        <i data-lucide="zap" class="h-3.5 w-3.5 animate-bounce"></i> Vibe Finansial: Slay & Safe Wealthy 💅
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-black tracking-tight text-slate-800">
+                        Yo, <span id="hero-username" class="bg-gradient-to-r from-pink-500 via-purple-600 to-amber-500 bg-clip-text text-transparent">Lala</span>! 👋
+                    </h2>
+                    <p id="hero-description" class="text-slate-500 text-xs md:text-sm mt-2 max-w-xl font-bold">
+                        Keuangan sehat walafiat! Masih aman buat jajan boba tapi inget nabung ya bestie.
+                    </p>
+                </div>
+
+                <!-- SAVING STREAK COMPONENT -->
+                <div class="flex items-center gap-4 bg-white/90 p-4 rounded-3xl border border-pink-100 shadow-sm w-full md:w-auto">
+                    <div class="bg-gradient-to-tr from-amber-400 to-pink-500 p-3 rounded-2xl shadow-md text-white">
+                        <i data-lucide="flame" class="h-6 w-6 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">Saving Streak</p>
+                        <h3 id="streak-counter" class="text-xl font-black text-transparent bg-gradient-to-r from-amber-500 to-pink-600 bg-clip-text">15 Hari Bertahan!</h3>
+                        <p class="text-[10px] text-slate-500 font-semibold">Tahan dari jajan impulsif</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DYNAMIC GENERAL BALANCE CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                
+                <div class="bg-white/95 p-5 rounded-3xl border border-pink-100 shadow-sm hover:border-pink-300 transition-all duration-300 hover:shadow-md">
+                    <p class="text-xs text-pink-600 font-black mb-1 tracking-wider uppercase">SALDO AKTIF (DRIP)</p>
+                    <h3 id="card-balance" class="text-2xl font-black text-slate-800">Rp 0</h3>
+                    <p class="text-[10px] text-slate-400 font-medium mt-2">Duit jajan bebas fomo</p>
+                </div>
+
+                <div class="bg-[#ecfdf5] p-5 rounded-3xl border border-emerald-100 shadow-sm hover:border-emerald-300 transition-all duration-300 hover:shadow-md">
+                    <p class="text-xs text-emerald-700 font-black mb-1 tracking-wider uppercase">TOTAL PEMASUKAN</p>
+                    <h3 id="card-income" class="text-2xl font-black text-emerald-600">+ Rp 0</h3>
+                    <div class="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                        <i data-lucide="trending-up" class="h-3.5 w-3.5"></i> <span>Good job, pahlawan cuan!</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#fff1f2] p-5 rounded-3xl border border-rose-100 shadow-sm hover:border-rose-300 transition-all duration-300 hover:shadow-md">
+                    <p class="text-xs text-rose-700 font-black mb-1 tracking-wider uppercase">TOTAL PENGELUARAN</p>
+                    <h3 id="card-expense" class="text-2xl font-black text-rose-500">- Rp 0</h3>
+                    <div class="flex items-center gap-1 text-[10px] text-rose-500 font-bold mt-2">
+                        <i data-lucide="trending-down" class="h-3.5 w-3.5"></i> <span>Awas bocor alus!</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#ecfeff] p-5 rounded-3xl border border-cyan-100 shadow-sm hover:border-cyan-300 transition-all duration-300 hover:shadow-md">
+                    <p class="text-xs text-cyan-700 font-black mb-1 tracking-wider uppercase">DIAMANKAN DI STASH</p>
+                    <h3 id="card-stash" class="text-2xl font-black text-cyan-600">Rp 0</h3>
+                    <p class="text-[10px] text-cyan-600 font-bold mt-2">Tabungan masa depan cerahmu</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== TAB 1: DASHBOARD (HOME) ==================== -->
+        <div id="tab-dashboard-content" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- LEFT AREA: REAL-TIME CHARTS & MUTASI LIST -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- INTERACTIVE AREA CHART -->
+                    <div class="bg-white rounded-[2rem] border border-pink-50 p-6 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-6">
+                          <div>
+                            <h3 class="text-lg font-black text-slate-800">Chart Keuangan 📈</h3>
+                            <p class="text-xs text-slate-400 font-medium">Progres cashflow sisa saldo kamu minggu ini</p>
+                          </div>
+                          <span class="bg-pink-50 text-pink-600 border border-pink-100 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                            Real-time
+                          </span>
+                        </div>
+
+                        <div class="h-64 w-full relative">
+                            <canvas id="flowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- MUTASI & CATATAN TRANSAKSI -->
+                    <div class="bg-white rounded-[2rem] border border-pink-50 p-6 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-6">
+                          <div>
+                            <h3 class="text-lg font-black text-slate-800">Spill Transaksi Terbaru 📝</h3>
+                            <p class="text-xs text-slate-400 font-medium">Daftar keluar masuknya pundi-pundi rupiah lo</p>
+                          </div>
+                          <button 
+                            onclick="openModal('add-tx-modal')"
+                            class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black text-xs px-4 py-2.5 rounded-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-md shadow-pink-100"
+                          >
+                            <i data-lucide="plus" class="h-4 w-4"></i> Catat Spill Baru
+                          </button>
+                        </div>
+
+                        <div id="transactions-container" class="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT SIDEBAR: DONUT PIE CHART & AI ROAST BOX -->
+                <div class="space-y-8">
+                    
+                    <!-- DONUT CATEGORY OUTFLOW MAP -->
+                    <div class="bg-white rounded-[2rem] border border-pink-50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div>
+                          <h3 class="text-md font-black text-slate-800">Uang Lala Lari Kemana? 🗺️</h3>
+                          <p class="text-xs text-slate-400 font-medium mb-4">Porsi bocornya dompet berdasarkan kategori</p>
+                        </div>
+
+                        <div class="h-48 w-full relative flex items-center justify-center">
+                            <canvas id="categoryChart"></canvas>
+                            <div id="empty-category-chart-msg" class="absolute inset-0 bg-white flex items-center justify-center text-center text-slate-400 text-xs font-bold hidden">
+                                Belum ada pengeluaran dicatatkan Lala.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MINI GOALS SNAPSHOT -->
+                    <div class="bg-white rounded-[2rem] border border-pink-50 p-6 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                          <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider">Celengan Terdekat</h3>
+                          <button onclick="switchTab('goals')" class="text-pink-600 hover:text-pink-500 text-xs font-black flex items-center gap-1">
+                            Selengkapnya <i data-lucide="chevron-right" class="h-3 w-3"></i>
+                          </button>
+                        </div>
+
+                        <div id="mini-goals-container" class="space-y-4">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- QUICK AI ROAST PANEL -->
+                    <div class="bg-gradient-to-br from-[#fdf2f8] to-[#fbf2ff] rounded-[2rem] border border-pink-200/50 p-6 text-center relative overflow-hidden shadow-sm hover:shadow-md transition-all">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-pink-300/10 rounded-full blur-xl"></div>
+                        <h4 class="text-xs font-black text-pink-600 uppercase tracking-widest mb-2">🔥 Coach AI Quick Roast</h4>
+                        <p id="quick-roast-text" class="text-xs text-slate-600 leading-relaxed italic mb-4 font-extrabold">
+                            "Lala, tiket konser dan trip jepang ditabungin kenceng, tapi check-out seblak & kopi caramel macchiato tiap jam 10 malem tetep nyala terus ya. Mau liburan ke Jepang atau mau buka kedai seblak di Tokyo?"
+                        </p>
+                        <button 
+                          onclick="switchTab('vibecheck')"
+                          class="bg-white border-2 border-pink-200 text-pink-600 hover:bg-pink-50 hover:text-pink-700 px-4 py-2 rounded-xl text-[10px] font-black transition-all shadow-sm"
+                        >
+                          Minta Di-Roast Lebih Kejam 💬
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: STASH BUCKETS (CELENGAN IMPIAN) ==================== -->
+        <div id="tab-goals-content" class="tab-content">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+              <div>
+                <h2 class="text-2xl font-black text-slate-800">🐷 Celengan Impian (Stash Buckets)</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">
+                  Sisihkan uang jajan lo langsung ke celengan khusus agar impian-impian besar Lala cepet kewujud!
+                </p>
+              </div>
+              <button 
+                onclick="openModal('add-goal-modal')"
+                class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black text-xs px-5 py-3 rounded-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-md shadow-pink-100"
+              >
+                <i data-lucide="plus" class="h-4 w-4"></i> Bikin Celengan Baru
+              </button>
+            </div>
+
+            <!-- STASH BUCKETS GRID CONTAINER -->
+            <div id="goals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected dynamically by JS -->
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: SUBSCRIPTION LEAKAGE (BOCOR ALUS) ==================== -->
+        <div id="tab-subs-content" class="tab-content">
+            <div class="bg-gradient-to-r from-[#fff1f2] via-white to-white rounded-[2.5rem] border border-rose-100 p-6 md:p-8 mb-8 shadow-sm">
+              <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                  <h2 class="text-2xl font-black text-rose-600">🚨 Bocor Alus (Subscription Leakage)</h2>
+                  <p class="text-xs text-slate-400 font-bold mt-1 max-w-xl">
+                    Sering boncos tanpa sadar gara-gara tagihan langganan otomatis? Pantau kebocoran pasif bulanan Lala langsung di bawah ini.
+                  </p>
+                </div>
+
+                <div class="bg-rose-50 border border-rose-100 px-6 py-4 rounded-3xl text-center shadow-inner">
+                  <p class="text-[10px] text-rose-600 font-black tracking-widest uppercase">Kebocoran Per Bulan</p>
+                  <h3 id="subs-leakage-total" class="text-2xl md:text-3xl font-black text-rose-500 mt-1">
+                    Rp 0
+                  </h3>
+                  <p id="subs-leakage-equivalent" class="text-[10px] text-slate-500 mt-1 font-semibold">Setara 0 gelas Kapi Boba!</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-lg font-black text-slate-800">Daftar Langganan Aktif Lala</h3>
+              <button 
+                onclick="openModal('add-sub-modal')"
+                class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black text-xs px-4 py-2.5 rounded-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-md"
+              >
+                <i data-lucide="plus" class="h-4 w-4"></i> Tambah Langganan
+              </button>
+            </div>
+
+            <div id="subscriptions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected dynamically by JS -->
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: AI FINANCIAL ROASTER (VIBE CHECK) ==================== -->
+        <div id="tab-vibecheck-content" class="tab-content">
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-white rounded-[2.5rem] border border-pink-100 p-6 flex flex-col h-[600px] justify-between shadow-md">
+                  
+                  <!-- Financial Coach Info -->
+                  <div class="flex items-center gap-4 border-b border-pink-50 pb-4">
+                    <div class="bg-gradient-to-tr from-pink-400 to-purple-400 w-12 h-12 rounded-2xl flex items-center justify-center font-black text-2xl shadow-md animate-bounce-slow">
+                      🤖
+                    </div>
+                    <div>
+                      <h3 class="font-black text-slate-800">AI Vibe Checker (Coach Sassy)</h3>
+                      <p class="text-xs text-emerald-600 font-bold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Siap nge-roast lo Lala!
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Chat Bubble History -->
+                  <div id="chat-history-container" class="flex-1 overflow-y-auto my-4 space-y-4 pr-2 custom-scrollbar bg-pink-50/10 p-4 rounded-3xl border border-pink-100/30">
+                     <!-- Injected dynamically by JS -->
+                  </div>
+
+                  <!-- Quick AI Prompts & Send Inputs -->
+                  <div class="border-t border-pink-50 pt-3">
+                    <p class="text-[10px] text-pink-600 font-black mb-2 uppercase tracking-wider">Pilih Instruksi Cepat:</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                      <button 
+                        onclick="sendQuickPrompt('Roast pengeluaran gue dong coach!')"
+                        class="bg-white border border-pink-100 hover:border-pink-300 text-[10px] px-3 py-1.5 rounded-xl text-pink-700 font-black transition-all shadow-sm"
+                      >
+                        🔥 Roast Keuangan Lala
+                      </button>
+                      <button 
+                        onclick="sendQuickPrompt('Bagi tips hemat instan dolo coach!')"
+                        class="bg-white border border-pink-100 hover:border-pink-300 text-[10px] px-3 py-1.5 rounded-xl text-pink-700 font-black transition-all shadow-sm"
+                      >
+                        💡 Tips Hemat Ampuh
+                      </button>
+                      <button 
+                        onclick="sendQuickPrompt('Dompet gue aman ga? Cek vibe saldo!')"
+                        class="bg-white border border-pink-100 hover:border-pink-300 text-[10px] px-3 py-1.5 rounded-xl text-pink-700 font-black transition-all shadow-sm"
+                      >
+                        ❓ Cek Vibe Dompet
+                      </button>
+                    </div>
+
+                    <!-- Main Send Message Form -->
+                    <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                      <input 
+                        type="text" 
+                        id="chat-input-field"
+                        placeholder="Ketik curhatan/keluhan tabungan lo ke Coach Sassy..."
+                        class="flex-1 bg-slate-50 border border-pink-100 focus:border-pink-300 focus:ring-1 focus:ring-pink-300 focus:outline-none rounded-2xl px-4 py-3 text-xs md:text-sm text-slate-800 transition-all font-semibold shadow-inner"
+                      />
+                      <button 
+                        type="submit" 
+                        class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black px-6 py-3 rounded-2xl hover:scale-102 active:scale-95 transition-all shadow-md text-xs md:text-sm"
+                      >
+                        Kirim
+                      </button>
+                    </form>
+                  </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== FORM MODAL: ADD TRANSACTION ==================== -->
+    <div id="add-tx-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden animate-fadeIn">
+      <div class="bg-white border border-pink-100 rounded-[2.5rem] w-full max-w-md p-6 relative shadow-2xl">
+        <button 
+          onclick="closeModal('add-tx-modal')"
+          class="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 rounded-full bg-slate-100"
+        >
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+
+        <h3 class="text-lg font-black mb-4 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
+          Catat Spill Transaksi Baru 💸
+        </h3>
+
+        <form onsubmit="saveTransaction(event)" class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Judul Transaksi / Keperluan</label>
+            <input 
+              type="text" 
+              id="tx-title"
+              required
+              placeholder="Contoh: Beli Tiket NIKI, Jualan Thrifting"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Nominal (Rupiah)</label>
+            <input 
+              type="number" 
+              id="tx-amount"
+              required
+              placeholder="Contoh: 150000"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-400 font-bold block mb-1">Jenis Arus Kas</label>
+              <select 
+                id="tx-type"
+                onchange="updateCategoryDropdown()"
+                class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+              >
+                <option value="expense">📉 Pengeluaran</option>
+                <option value="income">📈 Pemasukan</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs text-slate-400 font-bold block mb-1">Kategori</label>
+              <select 
+                id="tx-category"
+                class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+              >
+                <!-- Categories populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <button 
+            type="submit"
+            class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-2xl font-black mt-4 hover:opacity-95 transition-all shadow-lg shadow-pink-100 text-xs md:text-sm"
+          >
+            Simpan & Spill Keuangan ✨
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== FORM MODAL: ADD GOAL ==================== -->
+    <div id="add-goal-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden animate-fadeIn">
+      <div class="bg-white border border-pink-100 rounded-[2.5rem] w-full max-w-md p-6 relative shadow-2xl">
+        <button 
+          onclick="closeModal('add-goal-modal')"
+          class="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 rounded-full bg-slate-100"
+        >
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+
+        <h3 class="text-lg font-black mb-4 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
+          Target Tabungan Impian Baru 🐷
+        </h3>
+
+        <form onsubmit="saveGoal(event)" class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Mau beli/capai apa, Lala?</label>
+            <input 
+              type="text" 
+              id="goal-title"
+              required
+              placeholder="Contoh: Tiket Konser Olivia Rodrigo, iPad Pro M4"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-400 font-bold block mb-1">Target Dana (Rp)</label>
+              <input 
+                type="number" 
+                id="goal-target"
+                required
+                placeholder="Contoh: 3000000"
+                class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+              />
+            </div>
+
+            <div>
+              <label class="text-xs text-slate-400 font-bold block mb-1">Tabungan Awal (Rp)</label>
+              <input 
+                type="number" 
+                id="goal-current"
+                placeholder="Isi 0 jika baru mulai"
+                class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Kategori Celengan</label>
+            <select 
+              id="goal-category"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            >
+              <option value="📱 Gadget">📱 Gadget</option>
+              <option value="✈️ Travel">✈️ Travel</option>
+              <option value="🎫 Event">🎫 Event</option>
+              <option value="👕 Drip/Outfit">👕 Drip/Outfit</option>
+              <option value="🏫 Edukasi">🏫 Edukasi</option>
+            </select>
+          </div>
+
+          <button 
+            type="submit"
+            class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-2xl font-black mt-4 hover:opacity-95 transition-all shadow-lg text-xs md:text-sm"
+          >
+            Mulai Nabung Slay! 🔥
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== FORM MODAL: ADD SUBSCRIPTION ==================== -->
+    <div id="add-sub-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden animate-fadeIn">
+      <div class="bg-white border border-pink-100 rounded-[2.5rem] w-full max-w-md p-6 relative shadow-2xl">
+        <button 
+          onclick="closeModal('add-sub-modal')"
+          class="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 rounded-full bg-slate-100"
+        >
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+
+        <h3 class="text-lg font-black mb-4 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
+          Tambah Bocor Alus Baru (Subscription) 🎬
+        </h3>
+
+        <form onsubmit="saveSubscription(event)" class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Nama Layanan Langganan</label>
+            <input 
+              type="text" 
+              id="sub-title"
+              required
+              placeholder="Contoh: Netflix Premium, Gym Membership"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Tagihan per Bulan (Rp)</label>
+            <input 
+              type="number" 
+              id="sub-cost"
+              required
+              placeholder="Contoh: 186000"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Kategori Layanan</label>
+            <select 
+              id="sub-category"
+              class="w-full bg-slate-50 border border-pink-100 rounded-2xl p-3 text-xs md:text-sm focus:outline-none focus:border-pink-500 font-bold text-slate-700"
+            >
+              <option value="🎬 Movies">🎬 Movies</option>
+              <option value="🎵 Music">🎵 Music</option>
+              <option value="🤖 Tech">🤖 Tech</option>
+              <option value="💪 Fitness">💪 Fitness</option>
+            </select>
+          </div>
+
+          <button 
+            type="submit"
+            class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-2xl font-black mt-4 hover:opacity-95 transition-all shadow-lg text-xs md:text-sm"
+          >
+            Simpan Tagihan 💸
+          </button>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ==================== JAVASCRIPT STATE LOGIC ==================== -->
+    <script>
+        const INITIAL_TRANSACTIONS = [
+          { id: '1', title: 'Gaji Side Hustle (Project UI)', amount: 4500000, type: 'income', category: '📈 Side Hustle', date: '2026-06-15' },
+          { id: '2', title: 'Kopi Susu Caramel Macchiato', amount: 120000, type: 'expense', category: '☕ Kopi Senja', date: '2026-06-16' },
+          { id: '3', title: 'Skincare Glass Skin Glow', amount: 350000, type: 'expense', category: '✨ Self Care', date: '2026-06-17' },
+          { id: '4', title: 'Angpao Berkah Ortu', amount: 1500000, type: 'income', category: '🎁 Blessing', date: '2026-06-18' },
+        ];
+
+        const INITIAL_GOALS = [
+          { id: '1', title: 'Tiket Konser Olivia Rodrigo 2027', target: 4500000, current: 1500000, category: '🎫 Event' },
+          { id: '2', title: 'iPad Pro M4 Slay Edition', target: 18000000, current: 6000000, category: '📱 Gadget' },
+          { id: '3', title: 'Solo Trip ke Tokyo 🇯🇵', target: 20000000, current: 9500000, category: '✈️ Travel' },
+        ];
+
+        const INITIAL_SUBSCRIPTIONS = [
+          { id: '1', title: 'Spotify Premium Duo', cost: 71000, category: '🎵 Music', active: true },
+          { id: '2', title: 'Netflix Ultra HD 4K', cost: 186000, category: '🎬 Movies', active: true },
+          { id: '3', title: 'ChatGPT Plus (Bestie Brain)', cost: 330000, category: '🤖 Tech', active: true },
+        ];
+
+        const CATEGORIES = {
+          income: ['📈 Side Hustle', '🎁 Blessing', '💼 Gaji Pokok', '💸 Cashback', '🚀 Investasi'],
+          expense: ['🍔 Munchies', '✨ Self Care', '🚗 Cab/Ojol', '👕 Drip/Outfit', '🎮 Gaming', '☕ Kopi Senja', '🏠 Kost/Bills']
+        };
+
+        const CANDY_COLORS = ['#ec4899', '#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#f43f5e', '#06b6d4'];
+
+        // Global States load from LocalStorage
+        let transactions = JSON.parse(localStorage.getItem('df_transactions')) || INITIAL_TRANSACTIONS;
+        let goals = JSON.parse(localStorage.getItem('df_goals')) || INITIAL_GOALS;
+        let subscriptions = JSON.parse(localStorage.getItem('df_subscriptions')) || INITIAL_SUBSCRIPTIONS;
+        let userName = localStorage.getItem('df_user_name') || 'Lala';
+        let streak = parseInt(localStorage.getItem('df_streak')) || 15;
+        let activeTab = 'dashboard';
+        
+        let chatHistory = JSON.parse(localStorage.getItem('df_chat_history')) || [
+          { 
+            sender: 'ai', 
+            text: 'Wassup Lala Bestie! 💅 Gue AI Coach Finansial tersavage se-Indonesia. Dompet lo lagi di puncak kemakmuran atau lagi megap-megap butuh pertolongan darurat? Sini curhat, atau minta gue ROAST mentah-mentah pengeluaran lo! 🔥',
+            time: 'Just now'
+          }
+        ];
+
+        // Global Chart instances
+        let flowChart = null;
+        let categoryChart = null;
+
+        // Function to synchronize state with LocalStorage and trigger a general DOM rerender
+        function syncAndRender() {
+            localStorage.setItem('df_transactions', JSON.stringify(transactions));
+            localStorage.setItem('df_goals', JSON.stringify(goals));
+            localStorage.setItem('df_subscriptions', JSON.stringify(subscriptions));
+            localStorage.setItem('df_user_name', userName);
+            localStorage.setItem('df_streak', streak);
+            localStorage.setItem('df_chat_history', JSON.stringify(chatHistory));
+
+            renderAll();
+        }
+
+        // Global master renderer
+        function renderAll() {
+            // Update simple text tags
+            document.getElementById('username-input').value = userName;
+            document.getElementById('hero-username').textContent = userName;
+            document.getElementById('avatar-container').textContent = userName.substring(0, 2).toUpperCase();
+            document.getElementById('streak-counter').textContent = `${streak} Hari Bertahan!`;
+
+            // Calculate Metrics
+            const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
+            const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+            const goalSavings = goals.reduce((sum, g) => sum + Number(g.current), 0);
+            const balance = totalIncome - totalExpense;
+            const monthlySubsLeak = subscriptions.filter(s => s.active).reduce((sum, s) => sum + Number(s.cost), 0);
+
+            // Leveling System for "Lala"
+            let level = "Sisa Saldo Tipis Bestie 😭";
+            let badgeClass = "text-rose-500 bg-rose-50 border-rose-200";
+            let description = "Dompet sekarat! Sikat mie instan dulu gih biar ga dapet surat peringatan finansial.";
+            
+            if (balance > 10000000) {
+              level = "Billionaire Grindset 🚀";
+              badgeClass = "text-emerald-700 bg-emerald-50 border-emerald-200";
+              description = `Gokil! Saldo melimpah ruah. OTW beli franchise boba kah ${userName}?`;
+            } else if (balance > 5000000) {
+              level = "Slay & Safe Wealthy 💅";
+              badgeClass = "text-indigo-700 bg-indigo-50 border-indigo-200";
+              description = "Keuangan sehat walafiat! Masih aman buat nongkrong tapi inget nabung ya.";
+            } else if (balance > 2000000) {
+              level = "Cukup Buat Hidup & Kopi ☕";
+              badgeClass = "text-amber-700 bg-amber-50 border-amber-200";
+              description = "Keuangan pas-pasan. Cukuplah buat bertahan hidup & sesekali checkout e-commerce.";
+            }
+
+            // Inundate main header elements
+            const levelBadge = document.getElementById('financial-level-badge');
+            levelBadge.className = `inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-black mb-4 shadow-sm ${badgeClass}`;
+            levelBadge.innerHTML = `<i data-lucide="zap" class="h-3.5 w-3.5 animate-bounce"></i> Vibe Finansial: ${level}`;
+            document.getElementById('hero-description').textContent = description;
+
+            // Inundate numeric stats card
+            document.getElementById('card-balance').textContent = `Rp ${balance.toLocaleString('id-ID')}`;
+            document.getElementById('card-income').textContent = `+ Rp ${totalIncome.toLocaleString('id-ID')}`;
+            document.getElementById('card-expense').textContent = `- Rp ${totalExpense.toLocaleString('id-ID')}`;
+            document.getElementById('card-stash').textContent = `Rp ${goalSavings.toLocaleString('id-ID')}`;
+
+            // Render components
+            renderTransactionsList();
+            renderGoalsList();
+            renderSubscriptionsList();
+            renderChatHistory();
+
+            // Render Charts
+            updateCharts(balance, transactions);
+
+            // Re-render Lucide icons dynamically added
+            lucide.createIcons();
+        }
+
+        function renderTransactionsList() {
+            const container = document.getElementById('transactions-container');
+            container.innerHTML = '';
+
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10">
+                      <p class="text-slate-400 font-bold text-sm">Belum ada transaksi dicatat.</p>
+                      <p class="text-xs text-slate-400 mt-1">Lala, klik tombol di atas buat nambah mutasi!</p>
+                    </div>`;
+                return;
+            }
+
+            transactions.forEach(tx => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-4 rounded-2xl bg-[#faf5ff]/40 border border-pink-50/50 hover:border-pink-200 hover:bg-white transition-all duration-200";
+                
+                const emoji = tx.type === 'income' ? '💰' : '💸';
+                const badgeColor = tx.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-500';
+                const amountPrefix = tx.type === 'income' ? '+' : '-';
+                const amountColor = tx.type === 'income' ? 'text-emerald-600' : 'text-rose-500';
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-4">
+                      <div class="p-3 rounded-xl font-bold text-lg ${badgeColor}">
+                        ${emoji}
+                      </div>
+                      <div>
+                        <h4 class="font-extrabold text-sm text-slate-800">${tx.title}</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                          <span class="text-[10px] bg-pink-50 px-2 py-0.5 rounded-full text-pink-600 font-bold border border-pink-100/50">${tx.category}</span>
+                          <span class="text-[10px] text-slate-400">${tx.date}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                      <p class="font-black text-sm ${amountColor}">
+                        ${amountPrefix} Rp ${Number(tx.amount).toLocaleString('id-ID')}
+                      </p>
+                      <button 
+                        onclick="deleteTransaction('${tx.id}')"
+                        class="p-2 text-slate-400 hover:text-rose-500 transition-colors rounded-lg hover:bg-rose-50"
+                        title="Hapus"
+                      >
+                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                      </button>
+                    </div>`;
+                container.appendChild(item);
+            });
+        }
+
+        function renderGoalsList() {
+            const container = document.getElementById('goals-grid');
+            const miniContainer = document.getElementById('mini-goals-container');
+            container.innerHTML = '';
+            miniContainer.innerHTML = '';
+
+            goals.forEach((g, index) => {
+                const percent = Math.min(100, Math.round((g.current / g.target) * 100));
+                
+                // 1. Render in Goals Tab
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-[2.5rem] border border-pink-100 p-6 flex flex-col justify-between hover:border-pink-300 hover:shadow-lg transition-all duration-300 relative group overflow-hidden";
+                card.innerHTML = `
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-pink-100/20 rounded-full blur-3xl group-hover:bg-pink-200/30 transition-all duration-500"></div>
+                    <div>
+                      <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black bg-pink-50 text-pink-700 px-3 py-1 rounded-full border border-pink-100">
+                          ${g.category}
+                        </span>
+                        <button 
+                          onclick="deleteGoal('${g.id}')"
+                          class="p-1.5 text-slate-400 hover:text-rose-500 transition-colors rounded-lg hover:bg-rose-50"
+                          title="Hapus Celengan"
+                        >
+                          <i data-lucide="trash-2" class="h-4 w-4"></i>
+                        </button>
+                      </div>
+
+                      <h3 class="text-xl font-black text-slate-800 mb-1">${g.title}</h3>
+                      <p class="text-xs text-slate-400 font-medium mb-6">Konsistensi lo adalah kunci suksesnya!</p>
+
+                      <div class="space-y-2 mb-6">
+                        <div class="flex items-center justify-between text-xs">
+                          <span class="text-slate-400 font-bold">Progress Tabungan</span>
+                          <span class="text-pink-600 font-black text-sm">${percent}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                          <div class="bg-gradient-to-r from-pink-500 via-purple-500 to-amber-400 h-full transition-all duration-500 rounded-full" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs pt-1">
+                          <span class="font-black text-slate-700">Rp ${Number(g.current).toLocaleString('id-ID')}</span>
+                          <span class="text-slate-400 font-semibold">Target: Rp ${Number(g.target).toLocaleString('id-ID')}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="bg-pink-50/40 p-4 rounded-3xl border border-pink-100/50">
+                      <p class="text-[9px] text-pink-600 font-black mb-3 uppercase tracking-wider text-center">💸 SUNTIK DANA INSTAN</p>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button onclick="injectSavings('${g.id}', 50000)" class="bg-white border border-pink-100 hover:border-pink-400 hover:text-pink-600 py-1.5 rounded-xl text-[10px] font-black transition-all shadow-sm active:scale-95">+50k</button>
+                        <button onclick="injectSavings('${g.id}', 100000)" class="bg-white border border-pink-100 hover:border-pink-400 hover:text-pink-600 py-1.5 rounded-xl text-[10px] font-black transition-all shadow-sm active:scale-95">+100k</button>
+                        <button onclick="injectSavings('${g.id}', 500000)" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 py-1.5 rounded-xl text-[10px] font-black transition-all shadow-sm active:scale-95">+500k</button>
+                      </div>
+                    </div>`;
+                container.appendChild(card);
+
+                // 2. Render in Mini Goal Sidebar Snapshot (Limit to top 2)
+                if (index < 2) {
+                    const miniCard = document.createElement('div');
+                    miniCard.className = "bg-pink-50/30 p-3.5 rounded-2xl border border-pink-100/40";
+                    miniCard.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                          <span class="text-xs font-black text-slate-700">${g.title}</span>
+                          <span class="text-xs font-black text-pink-600">${percent}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                          <div class="bg-gradient-to-r from-pink-500 to-purple-500 h-full" style="width: ${percent}%"></div>
+                        </div>
+                        <p class="text-[9px] text-slate-400 mt-1 font-bold">
+                          Rp ${Number(g.current).toLocaleString('id-ID')} / Rp ${Number(g.target).toLocaleString('id-ID')}
+                        </p>`;
+                    miniContainer.appendChild(miniCard);
+                }
+            });
+        }
+
+        function renderSubscriptionsList() {
+            const container = document.getElementById('subscriptions-grid');
+            container.innerHTML = '';
+
+            let totalLeak = 0;
+
+            subscriptions.forEach(s => {
+                if (s.active) totalLeak += Number(s.cost);
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-[2.5rem] border p-6 flex flex-col justify-between transition-all duration-300 shadow-sm ${s.active ? 'border-rose-100 shadow-rose-50' : 'border-slate-100 opacity-50'}`;
+                
+                const toggleBtnText = s.active ? '🔴 Bocor Aktif' : '⚪ Di-Pause / Stop';
+                const toggleBtnClass = s.active ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-slate-100 text-slate-500 border border-slate-200';
+
+                card.innerHTML = `
+                    <div>
+                    <div class="flex items-center justify-between mb-4">
+                      <span class="text-[10px] bg-pink-50 text-pink-600 px-2.5 py-1 rounded-full border border-pink-100 font-black">
+                        ${s.category}
+                      </span>
+                      <button 
+                        onclick="deleteSubscription('${s.id}')"
+                        class="p-1 text-slate-400 hover:text-rose-500 transition-colors rounded-lg hover:bg-rose-50"
+                        title="Hapus"
+                      >
+                        <i data-lucide="trash-2" class="h-4.5 w-4.5"></i>
+                      </button>
+                    </div>
+
+                    <h4 class="text-lg font-black text-slate-800 mb-1">${s.title}</h4>
+                    <p class="text-xs text-slate-400 font-semibold">Tagihan autopay bulanan</p>
+
+                    <div class="mt-6 flex items-baseline gap-1">
+                      <span class="text-2xl font-black text-rose-500">Rp ${Number(s.cost).toLocaleString('id-ID')}</span>
+                      <span class="text-xs text-slate-400 font-semibold">/ bulan</span>
+                    </div>
+                  </div>
+
+                  <div class="mt-8 pt-4 border-t border-slate-50 flex items-center justify-between">
+                    <span class="text-xs text-slate-400 font-black">Status Langganan:</span>
+                    <button 
+                      onclick="toggleSubscription('${s.id}')"
+                      class="px-4 py-1.5 rounded-xl text-xs font-black transition-all ${toggleBtnClass}"
+                    >
+                      ${toggleBtnText}
+                    </button>
+                  </div>`;
+                container.appendChild(card);
+            });
+
+            // Update Subscription Leakage Panel
+            document.getElementById('subs-leakage-total').textContent = `Rp ${totalLeak.toLocaleString('id-ID')}`;
+            document.getElementById('subs-leakage-equivalent').textContent = `Setara ${Math.round(totalLeak / 25000)} gelas Kopi Boba!`;
+        }
+
+        function renderChatHistory() {
+            const container = document.getElementById('chat-history-container');
+            container.innerHTML = '';
+
+            chatHistory.forEach(chat => {
+                const bubble = document.createElement('div');
+                bubble.className = `flex ${chat.sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                
+                const layoutClass = chat.sender === 'user' 
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-tr-none shadow-md' 
+                  : 'bg-white border border-pink-100 text-slate-800 rounded-tl-none shadow-sm';
+
+                const timeClass = chat.sender === 'user' ? 'text-pink-100' : 'text-slate-400';
+
+                bubble.innerHTML = `
+                    <div class="max-w-[80%] rounded-2xl px-4 py-3 text-xs md:text-sm font-bold leading-relaxed ${layoutClass}">
+                      <p>${chat.text}</p>
+                      <span class="text-[8px] block mt-1.5 text-right ${timeClass}">${chat.time}</span>
+                    </div>`;
+                container.appendChild(bubble);
+            });
+
+            // Auto Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateCharts(balance, currentTransactions) {
+            // Area Chart: flowChart
+            const base = balance > 0 ? balance : 1000000;
+            const flowData = [base * 0.75, base * 0.8, base * 0.92, base];
+
+            if (flowChart) flowChart.destroy();
+            const flowCtx = document.getElementById('flowChart').getContext('2d');
+            
+            // Create nice light gradient for Area Chart
+            const fillGradient = flowCtx.createLinearGradient(0, 0, 0, 240);
+            fillGradient.addColorStop(0, 'rgba(236, 72, 153, 0.4)');
+            fillGradient.addColorStop(1, 'rgba(236, 72, 153, 0)');
+
+            flowChart = new Chart(flowCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis'],
+                    datasets: [{
+                        label: 'Sisa Saldo',
+                        data: flowData,
+                        borderColor: '#ec4899',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ec4899',
+                        pointHoverRadius: 7,
+                        backgroundColor: fillGradient,
+                        fill: true,
+                        tension: 0.35
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10, family: 'Plus Jakarta Sans', weight: 'bold' },
+                                callback: function(value) { return 'Rp' + value.toLocaleString('id-ID'); }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10, family: 'Plus Jakarta Sans', weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+
+            // Donut Chart: categoryChart
+            const expenses = currentTransactions.filter(t => t.type === 'expense');
+            const dataMap = {};
+            expenses.forEach(e => {
+                dataMap[e.category] = (dataMap[e.category] || 0) + Number(e.amount);
+            });
+
+            const labels = Object.keys(dataMap);
+            const values = Object.values(dataMap);
+
+            if (categoryChart) categoryChart.destroy();
+            
+            const emptyMsg = document.getElementById('empty-category-chart-msg');
+            if (labels.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                return;
+            } else {
+                emptyMsg.classList.add('hidden');
+            }
+
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: CANDY_COLORS.slice(0, labels.length),
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10, family: 'Plus Jakarta Sans', weight: 'bold' },
+                                boxWidth: 10
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        // Toast Manager
+        function triggerToast(msg) {
+            const toast = document.getElementById('toast-notif');
+            const text = document.getElementById('toast-text');
+            text.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Username Editor
+        function updateUsername(val) {
+            userName = val.trim() || 'Lala';
+            syncAndRender();
+        }
+
+        // Dropdown populator for Modal categories based on expense / income choice
+        function updateCategoryDropdown() {
+            const type = document.getElementById('tx-type').value;
+            const select = document.getElementById('tx-category');
+            select.innerHTML = '';
+            CATEGORIES[type].forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                select.appendChild(opt);
+            });
+        }
+
+        // Modal triggers
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            if (id === 'add-tx-modal') updateCategoryDropdown();
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Transaction Save Action
+        function saveTransaction(e) {
+            e.preventDefault();
+            const title = document.getElementById('tx-title').value;
+            const amount = document.getElementById('tx-amount').value;
+            const type = document.getElementById('tx-type').value;
+            const category = document.getElementById('tx-category').value;
+
+            if(!title || !amount) {
+                triggerToast('Aduh Lala, isi dulu semua datanya ya!');
+                return;
+            }
+
+            const newTx = {
+                id: Date.now().toString(),
+                title: title,
+                amount: Math.abs(Number(amount)),
+                type: type,
+                category: category,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            transactions.unshift(newTx);
+            streak += 1;
+            
+            // reset form and close
+            document.getElementById('tx-title').value = '';
+            document.getElementById('tx-amount').value = '';
+            closeModal('add-tx-modal');
+
+            triggerToast('💸 Transaksi berhasil dicatat! Cashflow terupdate.');
+            syncAndRender();
+        }
+
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            triggerToast('🗑️ Catatan transaksi dibuang ke tempat sampah!');
+            syncAndRender();
+        }
+
+        // Goals Save Action
+        function saveGoal(e) {
+            e.preventDefault();
+            const title = document.getElementById('goal-title').value;
+            const target = document.getElementById('goal-target').value;
+            const current = document.getElementById('goal-current').value || 0;
+            const category = document.getElementById('goal-category').value;
+
+            if (!title || !target) {
+                triggerToast('Eitss, target celengan impian gaboleh kosong!');
+                return;
+            }
+
+            const newGoal = {
+                id: Date.now().toString(),
+                title: title,
+                target: Math.abs(Number(target)),
+                current: Math.abs(Number(current)),
+                category: category
+            };
+
+            goals.push(newGoal);
+
+            // reset form and close
+            document.getElementById('goal-title').value = '';
+            document.getElementById('goal-target').value = '';
+            document.getElementById('goal-current').value = '';
+            closeModal('add-goal-modal');
+
+            triggerToast('🐷 Bucket celengan baru sukses dideklarasikan!');
+            syncAndRender();
+        }
+
+        function injectSavings(goalId, amountToInject) {
+            goals = goals.map(g => {
+                if (g.id === goalId) {
+                    const nextCurrent = g.current + amountToInject;
+                    if (nextCurrent >= g.target) {
+                        triggerToast(`🎉 Congrats Lala! Target "${g.title}" kamu udah FULLY FUNDED! 🔥`);
+                        return { ...g, current: g.target };
+                    }
+                    triggerToast(`🔥 Disuntik Rp ${amountToInject.toLocaleString('id-ID')} ke ${g.title}!`);
+                    return { ...g, current: nextCurrent };
+                }
+                return g;
+            });
+            syncAndRender();
+        }
+
+        function deleteGoal(id) {
+            goals = goals.filter(g => g.id !== id);
+            triggerToast('🗑️ Bucket tabungan dihapus!');
+            syncAndRender();
+        }
+
+        // Subscriptions Save Action
+        function saveSubscription(e) {
+            e.preventDefault();
+            const title = document.getElementById('sub-title').value;
+            const cost = document.getElementById('sub-cost').value;
+            const category = document.getElementById('sub-category').value;
+
+            if(!title || !cost) {
+                triggerToast('Nominal tagihan bulanan wajib diisi!');
+                return;
+            }
+
+            const newSub = {
+                id: Date.now().toString(),
+                title: title,
+                cost: Math.abs(Number(cost)),
+                category: category,
+                active: true
+            };
+
+            subscriptions.push(newSub);
+
+            // reset form and close
+            document.getElementById('sub-title').value = '';
+            document.getElementById('sub-cost').value = '';
+            closeModal('add-sub-modal');
+
+            triggerToast('💸 Tagihan bocor alus baru terdaftar!');
+            syncAndRender();
+        }
+
+        function toggleSubscription(id) {
+            subscriptions = subscriptions.map(s => {
+                if (s.id === id) {
+                    const nextState = !s.active;
+                    triggerToast(nextState ? '🚨 Langganan diaktifkan kembali!' : '🛑 Selamat, satu bocor alus berhasil di-pause! Hemat cuan!');
+                    return { ...s, active: nextState };
+                }
+                return s;
+            });
+            syncAndRender();
+        }
+
+        function deleteSubscription(id) {
+            subscriptions = subscriptions.filter(s => s.id !== id);
+            triggerToast('🗑️ Langganan dibuang dari list!');
+            syncAndRender();
+        }
+
+
+        // AI Vibe Coach Logic
+        function triggerSassyAIResponse(userPrompt) {
+            const prompt = userPrompt.toLowerCase();
+            let replyText = "";
+
+            const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
+            const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+            const balance = totalIncome - totalExpense;
+            const monthlySubsLeak = subscriptions.filter(s => s.active).reduce((sum, s) => sum + Number(s.cost), 0);
+
+            if (prompt.includes('roast') || prompt.includes('hujat') || prompt.includes('boros') || prompt.includes('kritis')) {
+                if (balance < 1000000) {
+                  replyText = `Duh ${userName} sayang... Sisa saldo lo tinggal Rp ${balance.toLocaleString('id-ID')}. Tapi mutasi belanja lo isinya jajan boba & checkout e-commerce mulu. Mending kurangi jajan kopi susu senja, sikat mie instan dolo gih biar ga dapet surat peringatan kemiskinan! 💀`;
+                } else if (monthlySubsLeak > 400000) {
+                  replyText = `${userName}, lo bayar subscription nyampe Rp ${monthlySubsLeak.toLocaleString('id-ID')} per bulan?! ChatGPT Plus, Netflix, Spotify nyala semua tapi tiap malem cuma scroll reels instagram sampai ketiduran. Mending buruan di-unsub daripada saldo lo nangis tiap awal bulan! 😤`;
+                } else {
+                  replyText = `Hmm, sebenernya manajemen finansial lo lumayan oke sih (Saldo Aktif: Rp ${balance.toLocaleString('id-ID')}). Tapi kok target celengan impian lo lambat banget penuhnya? Kebanyakan checkout keranjang kuning pas tengah malem ya Lala? Kurangi fomo-nya ya manis! ✨`;
+                }
+            } else if (prompt.includes('hemat') || prompt.includes('tips') || prompt.includes('saran') || prompt.includes('solusi')) {
+                replyText = `Nih bocoran rahasia biar ${userName} cepet kaya raya tanpa pesugihan: \n\n1. Cobain '3-Day Rule': Kalo pengen checkout barang non-primer, diemin dulu 3 hari. Kalo hari ke-4 masih kepikiran, baru beli.\n2. Selalu isi Stash Bucket (celengan) tiap dapet bonus atau side income sebelum dipake nongkrong.\n3. Batasi jajan kopi kekinian. Sekali nongkrong 50 ribu bisa buat makan kenyang seharian di warteg terdekat!`;
+            } else if (prompt.includes('halo') || prompt.includes('hi') || prompt.includes('hey') || prompt.includes('p')) {
+                replyText = `Halo ${userName} bestie! Gimana kondisi kantong lo hari ini? Ada pengeluaran hedon ga penting yang mau lo spill ke gue biar gue luruskan pikirannya? 💅`;
+            } else {
+                replyText = `Aduh ${userName}, gue ngerti curhatan lo. Tapi coba tanyain tentang 'Roast keuangan gue', 'Tips hemat dong coach!', atau sebutin barang impian lo biar gue bantu strateginya. Saldo lo sekarang di angka Rp ${balance.toLocaleString('id-ID')}, pertahankan gaya hidup sederhana ya! 😉`;
+            }
+
+            const aiMsg = {
+                sender: 'ai',
+                text: replyText,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            chatHistory.push(aiMsg);
+            syncAndRender();
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input-field');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const userMsg = {
+                sender: 'user',
+                text: text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            chatHistory.push(userMsg);
+            input.value = '';
+            syncAndRender();
+
+            // Simulate AI Coach typing delay
+            setTimeout(() => {
+                triggerSassyAIResponse(text);
+            }, 800);
+        }
+
+        function sendQuickPrompt(promptText) {
+            document.getElementById('chat-input-field').value = promptText;
+        }
+
+
+        // Navigation Tab Switcher
+        function switchTab(tabName) {
+            activeTab = tabName;
+            
+            // Update active state in nav buttons
+            const navButtons = document.querySelectorAll('#tab-navigation .nav-btn');
+            navButtons.forEach(btn => {
+                btn.className = "nav-btn px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold transition-all duration-300 text-slate-500 hover:text-pink-600";
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabName}`);
+            activeBtn.className = "nav-btn px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold transition-all duration-300 bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-md";
+
+            // Toggle active content divs
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            const activeContent = document.getElementById(`tab-${tabName}-content`);
+            activeContent.classList.add('active');
+
+            // Force dynamic layout/chart adjustment on returning to Home Tab
+            if (tabName === 'dashboard') {
+                const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
+                const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+                const balance = totalIncome - totalExpense;
+                updateCharts(balance, transactions);
+            }
+        }
+
+
+        // App Launcher
+        window.onload = function() {
+            renderAll();
+        }
+    </script>
+</body>
+</html>
